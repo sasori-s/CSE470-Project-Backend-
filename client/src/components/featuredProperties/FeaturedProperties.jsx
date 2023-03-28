@@ -1,55 +1,40 @@
+import useFetch from "../../hooks/useFetch"
 import "./featuredProperties.css"
 
 const FeaturedProperties = () => {
+
+    const{data, laoding, error} = useFetch("/hotels?featured=true&")
+
+    // here will be a limit after featured=true
+
   return (
     <div className="fp">
-        <div className="fpItem">
+        {laoding ? "Loading" : <>
+        {data.map((item) =>(
 
-        <img src="https://c4.wallpaperflare.com/wallpaper/74/457/102/life-room-interior-home-wallpaper-preview.jpg" alt="" className="fpImg"/>
-        <span className="fpName">Aparthotel Stare Miasto</span>
-        <span className="fpCity">Madrid</span>
-        <span className="fpPrice">Starting from $120</span>
-        <div className="fpRating">
-            <button>8.9</button>
-            <span>Excellent</span>
-        </div>
-        </div>
-        <div className="fpItem">
-        <img src="https://c4.wallpaperflare.com/wallpaper/74/457/102/life-room-interior-home-wallpaper-preview.jpg" alt="" className="fpImg"/>
-        <span className="fpName">Aparthotel Stare Miasto</span>
-        <span className="fpCity">Madrid</span>
-        <span className="fpPrice">Starting from $120</span>
-        <div className="fpRating">
-            <button>8.9</button>
-            <span>Excellent</span>
-        </div>
-        </div>
-        <div className="fpItem">
-        <img src="https://c4.wallpaperflare.com/wallpaper/74/457/102/life-room-interior-home-wallpaper-preview.jpg" alt="" className="fpImg"/>
-        <span className="fpName">Aparthotel Stare Miasto</span>
-        <span className="fpCity">Madrid</span>
-        <span className="fpPrice">Starting from $120</span>
-        <div className="fpRating">
-            <button>8.9</button>
-            <span>Excellent</span>
-        </div>
-        </div>
-        <div className="fpItem">
+            <div className="fpItem" key={item._id}>
 
-        <img src="https://c4.wallpaperflare.com/wallpaper/74/457/102/life-room-interior-home-wallpaper-preview.jpg" alt="" className="fpImg"/>
-        <span className="fpName">Aparthotel Stare Miasto</span>
-        <span className="fpCity">Madrid</span>
-        <span className="fpPrice">Starting from $120</span>
-        <div className="fpRating">
-            <button>8.9</button>
+        <img src={item.photos[0]}
+         alt="" 
+         className="fpImg"/>
+        <span className="fpName">{item.name}</span>
+        <span className="fpCity">{item.city}</span>
+        <span className="fpPrice">Starting from ${item.cheapestPrice}</span>
+        {item.rating && <div className="fpRating">
+            <button>{item.rating}</button>
             <span>Excellent</span>
+        </div>}
         </div>
-        </div>
+                ))
+        }
+        </>}
+        
     </div>
     
 
 
   )
 }
+
 
 export default FeaturedProperties
