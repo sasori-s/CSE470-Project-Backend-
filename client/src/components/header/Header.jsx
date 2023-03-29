@@ -9,6 +9,7 @@ import { DateRange } from "react-date-range";
 import {format} from "date-fns"
 import { useNavigate } from "react-router-dom";
 import { SearchContext } from "../../context/SearchContext";
+import { AuthContext } from "../../context/AuthContext";
 
 const Header = ({type}) => {
 
@@ -23,6 +24,7 @@ const [dates, setDates] = useState([
   ]);
 
 const navigate = useNavigate()
+const {user} = useContext(AuthContext);
 
 const [openOptions, setOpenOptions] = useState(false);
 const [options, setOptions] = useState({
@@ -82,7 +84,7 @@ const handleSearch = ()=>{
             <>
             <h1 className="headerTitle">A lifetime of discounts? it's Genius</h1>
         <p className="headerDesc">Get rewarded for your tavels- unlock more with free SamsBooking account</p>
-        <button className="headerBtn">Sign in / Register</button>
+        { !user && <button className="headerBtn">Sign in / Register</button>}
         <div className="headerSearch">
             <div className="headerSearchItem">
                 <FontAwesomeIcon icon={faBed} className='headerIcon' />
