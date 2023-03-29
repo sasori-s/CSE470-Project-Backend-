@@ -1,6 +1,6 @@
 import express from "express"
 import { verify } from "jsonwebtoken";
-import { countByCity, countByType, createHotel, deleteHotel, getHotel, getHotels, updateHotel } from "../controllers/hotel.js";
+import { countByCity, countByType, createHotel, deleteHotel, getHotel, getHotelRooms, getHotels, updateHotel } from "../controllers/hotel.js";
 import Hotel from "../models/Hotel.js";
 import { createError } from "../utils/error.js";
 import {verifyAdmin} from "../utils/verifyToken.js";
@@ -23,6 +23,7 @@ router.get("/find/:id", getHotel)
 router.get("/", getHotels) 
 router.get("/countByCity", countByCity) 
 router.get("/countByType", countByType) 
+router.get("/room/:id", getHotelRooms ) 
 
 
 export default router
