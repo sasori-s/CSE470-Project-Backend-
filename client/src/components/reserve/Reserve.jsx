@@ -4,12 +4,14 @@ import { useContext, useState } from "react"
 import useFetch from "../../hooks/useFetch"
 import "./reserve.css"
 import {SearchContext} from "../../context/SearchContext"
+import {useNavigate} from "react-router-dom" 
+import axios from "axios"
 
 const Reserve = ({setOpen, hotelId}) => {
     
     var link = `http://localhost:8800/api/hotels/room/${hotelId}`
     const [selectedRooms, setSelectedRooms] = useState([])
-    const{ data, loading, error} = useFetch(link)
+    const{ data, loading, error} = useFetch(`/hotels/room/${hotelId}`)
     console.log(data)
     const {dates} = useContext(SearchContext)
 
@@ -28,7 +30,18 @@ const Reserve = ({setOpen, hotelId}) => {
         return dates
     }
 
-    console.log(getDatesInRange(dates[0].startDate, dates[0].endDate))
+    const alldates = getDatesInRange(dates[0].startDate, dates[0].endDate)
+    // console.log(getDatesInRange(dates[0].startDate, dates[0].endDate))
+
+
+
+    const isAvailable = (roomNumber) =>{
+        const isFound = roomNumber.unvailableDates.some((date)=> alldates.includes(new Date(date).getTime())
+            )
+
+            return !isFound
+        // console.log(roomNumber.some((date)=> alldates.includes(new Date(date).getTime())))
+    }
 
     const handleSelect = (e) =>{
         const checked = e.target.checked
@@ -37,9 +50,23 @@ const Reserve = ({setOpen, hotelId}) => {
     }
 
     console.log(selectedRooms)
+    
 
-    const handleClick = () =>{
+    const navigate = useNavigate()
 
+    const handleClick = async () =>{
+        try {
+            await Promise.all(selectedRooms.map((roomId)=>{
+                const res = axios.put(`/rooms/availability/${roomId}`, {dates:alldates})
+            
+            return res.data;
+        }
+        ))
+        setOpen(false)
+        navigate("/")
+    }catch (err) {
+            
+        }
     }
   return (
     <div className="reserve">
@@ -60,16 +87,21 @@ const Reserve = ({setOpen, hotelId}) => {
                         </div>
                         <div className="rPrice">{item.price}</div>
                     </div>
-                        {item.roomNumbers.map(roomNumbers=>(
-                        <div className="room">
-                            <label htmlFor="">{roomNumbers.number}</label>
-                            <input type="checkbox"
-                            value={roomNumbers._id}
-                            onChange={handleSelect}
-                            />
+                    <div className="rSelectRooms">
 
-                    </div>
+                        {item.roomNumbers.map(roomNumber=>(
+                            <div className="room">
+                            <label htmlFor="">{roomNumber.number}</label>
+                            <input 
+                            type="checkbox"
+                            value={roomNumber._id}
+                            onChange={handleSelect}
+                            disabled={!isAvailable(roomNumber)}
+                            />
+                            
+                            </div>
                         ))}
+                    </div>
                 </div>
             ))} 
             <button 
@@ -78,6 +110,7 @@ const Reserve = ({setOpen, hotelId}) => {
         </div>
     </div>
   )
+
 }
 
 export default Reserve
